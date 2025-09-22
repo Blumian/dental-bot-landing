@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DentalBot AI - Agente Conversacional para Clínicas Dentales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .hero {
+            padding: 140px 0 80px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%23667eea" opacity="0.1"/></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            padding: 1rem 2rem;
+            border: 2px solid #667eea;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-mockup {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+            50% { box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2); }
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .chat-message {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            position: relative;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.5s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .feature-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        .demo {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .demo-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #2d3748;
+        }
+
+        .demo-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .demo-features li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: #4a5568;
+        }
+
+        .demo-features li::before {
+            content: '✓';
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .interactive-demo {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-chat {
+            height: 400px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 1rem;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .demo-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .demo-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .demo-input input:focus {
+            border-color: #667eea;
+        }
+
+        .demo-input button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .demo-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .cta-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: #667eea;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        #whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: bounce 2s infinite;
+        }
+
+        #whatsapp-float a {
+            background: #25D366;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        #whatsapp-float a:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .hero-content,
+            .demo-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-buttons,
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">
+                🦷 DentalBot AI
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#funcionalidades">Funcionalidades</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <a href="#demo" class="cta-button">Probar Demo</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Revoluciona la Atención de tu Clínica Dental</h1>
+                    <p>Nuestro agente conversacional con IA atiende a tus pacientes 24/7, agenda citas automáticamente y mejora la experiencia del cliente mientras tú te enfocas en lo que mejor sabes hacer.</p>
+                    <div class="hero-buttons">
+                        <a href="https://wa.me/34900123456?text=Hola,%20quiero%20probar%20el%20bot%20demo%20para%20mi%20clínica" target="_blank" class="btn-primary">📱 Probar Bot WhatsApp</a>
+                        <a href="#funcionalidades" class="btn-secondary">Conocer Más</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="chat-mockup">
+                        <div class="chat-header">
+                            <div class="chat-avatar">🦷</div>
+                            <div>
+                                <strong>DentalBot</strong>
+                                <div style="font-size: 0.8rem; color: #718096;">En línea</div>
+                            </div>
+                        </div>
+                        <div class="chat-message">
+                            ¡Hola! Soy el asistente virtual de Clínica Sonrisa. ¿En qué puedo ayudarte hoy?
+                        </div>
+                        <div class="chat-message">
+                            Puedo ayudarte a:
+                            • Agendar citas
+                            • Responder preguntas frecuentes
+                            • Proporcionar información sobre tratamientos
+                        </div>
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="funcionalidades">
+        <div class="container">
+            <div class="section-title">
+                <h2>¿Por qué elegir nuestro Agente Conversacional?</h2>
+                <p>Diseñado específicamente para clínicas dentales, nuestro bot entiende las necesidades únicas de tu práctica</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Agenda Automatizada</h3>
+                    <p>Programa citas automáticamente sincronizando con tu calendario. Reducción del 80% en llamadas para agendar.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Atención 24/7</h3>
+                    <p>Tu clínica nunca duerme. Atiende consultas, emergencias y dudas las 24 horas del día, todos los días del año.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>IA Especializada</h3>
+                    <p>Entrenado con conocimiento dental específico. Responde preguntas sobre tratamientos, precios y procedimientos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analíticas Avanzadas</h3>
+                    <p>Dashboards completos con métricas de conversación, satisfacción del paciente y oportunidades de mejora.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Integración Total</h3>
+                    <p>Se conecta con tu sistema actual: WhatsApp, web, software de gestión y herramientas de marketing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>ROI Comprobado</h3>
+                    <p>Aumenta conversiones en un 40% y reduce costos operativos. Se paga solo en menos de 3 meses.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="demo" id="demo">
+        <div class="container">
+            <div class="demo-container">
+                <div class="demo-content">
+                    <h2>Prueba el Demo Interactivo</h2>
+                    <p>Experimenta cómo nuestro agente conversacional puede transformar la atención al cliente de tu clínica dental.</p>
+                    <ul class="demo-features">
+                        <li>Respuestas inmediatas y precisas</li>
+                        <li>Agendamiento de citas en tiempo real</li>
+                        <li>Información sobre tratamientos</li>
+                        <li>Manejo de emergencias dentales</li>
+                        <li>Seguimiento post-tratamiento</li>
+                    </ul>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="#contacto" class="btn-primary">Solicitar Demostración Personalizada</a>
+                        <a href="https://wa.me/34900123456?text=Hola,%20quiero%20probar%20el%20bot%20para%20mi%20clínica" 
+                           target="_blank" 
+                           class="btn-secondary" 
+                           style="background: #25D366; color: white; border: none;">
+                            📱 Probar por WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <h3 style="margin-bottom: 1rem; text-align: center; color: #2d3748;">Demo en Vivo</h3>
+                    <div class="demo-chat" id="demoChat">
+                        <div class="chat-message">
+                            ¡Hola! Soy el asistente de Clínica Dental Ejemplo. ¿En qué puedo ayudarte?
+                        </div>
+                    </div>
+                    <div class="demo-input">
+                        <input type="text" id="demoInput" placeholder="Escribe tu consulta aquí..." onkeypress="handleDemoKeypress(event)">
+                        <button onclick="sendDemoMessage()">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contacto">
+        <div class="container">
+            <div class="cta-content">
+                <h2>¿Listo para Transformar tu Clínica?</h2>
+                <p>Únete a más de 150 clínicas dentales que ya están revolucionando su atención al cliente</p>
+                <div class="cta-buttons">
+                    <a href="mailto:contacto@dentalbot.ai" class="btn-white">Solicitar Demo Gratis</a>
+                    <a href="https://wa.me/34900123456?text=Quiero%20información%20sobre%20el%20agente%20conversacional%20para%20mi%20clínica" 
+                       target="_blank" 
+                       class="btn-white" 
+                       style="background: #25D366;">📱 WhatsApp</a>
+                    <a href="tel:+34900123456" class="btn-white">Llamar Ahora</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 DentalBot AI. Transformando la experiencia dental, una conversación a la vez.</p>
+        </div>
+    </footer>
+
+    <div id="whatsapp-float">
+        <a href="https://wa.me/34900123456?text=Hola,%20vengo%20desde%20su%20página%20web%20y%20quiero%20probar%20el%20bot%20demo" target="_blank">
+            📱 Demo WhatsApp
+        </a>
+    </div>
+
+    <script>
+        const demoResponses = {
+            "hola": "¡Hola! Me alegra poder ayudarte. ¿Qué necesitas hoy?",
+            "cita": "Perfecto, puedo ayudarte a agendar una cita. ¿Qué tipo de consulta necesitas? Tengo disponibilidad para limpieza dental el martes a las 10:00 AM o para revisión general el miércoles a las 3:00 PM.",
+            "precio": "Te puedo proporcionar información sobre nuestros tratamientos:\n• Limpieza dental: €60\n• Revisión general: €40\n• Blanqueamiento: €250\n¿Te interesa algún tratamiento en particular?",
+            "emergencia": "Entiendo que es una urgencia. Para emergencias dentales, tenemos disponibilidad inmediata. ¿Podrías describir brevemente tu situación? Te conectaré con nuestro dentista de guardia.",
+            "horario": "Nuestros horarios de atención son:\n• Lunes a Viernes: 9:00 AM - 8:00 PM\n• Sábados: 9:00 AM - 2:00 PM\n• Domingos: Cerrado\n¿Te gustaría agendar una cita en algún horario específico?",
+            "default": "Gracias por tu consulta. Como dentista virtual, puedo ayudarte con información sobre tratamientos, agendar citas, consultar horarios y manejar urgencias. ¿En qué específicamente te puedo asistir?"
+        };
+
+        function sendDemoMessage() {
+            const input = document.getElementById('demoInput');
+            const chat = document.getElementById('demoChat');
+            const message = input.value.trim().toLowerCase();
+            
+            if (!message) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message';
+            userMsg.style.background = '#667eea';
+            userMsg.style.color = 'white';
+            userMsg.style.marginLeft = '20%';
+            userMsg.textContent = input.value;
+            chat.appendChild(userMsg);
+
+            input.value = '';
+
+            setTimeout(() => {
+                const botResponse = getBotResponse(message);
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message';
+                botMsg.style.whiteSpace = 'pre-line';
+                botMsg.textContent = botResponse;
+                chat.appendChild(botMsg);
+                chat.scrollTop = chat.scrollHeight;
+            }, 1000);
+
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function getBotResponse(message) {
+            for (let key in demoResponses) {
+                if (message.includes(key)) {
+                    return demoResponses[key];
+                }
+            }
+            return demoResponses.default;
+        }
+
+        function handleDemoKeypress(event) {
+            if (event.key === 'Enter') {
+                sendDemoMessage();
+            }
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        setInterval(() => {
+            const chat = document.getElementById('demoChat');
+            if (chat.children.length < 8) {
+                const examples = [
+                    "Prueba escribir 'cita' para ver el agendamiento automático",
+                    "Escribe 'precio' para ver información de tratamientos",
+                    "Prueba con 'emergencia' para ver el manejo de urgencias"
+                ];
+                const randomExample = examples[Math.floor(Math.random() * examples.length)];
+                
+                const tipMsg = document.createElement('div');
+                tipMsg.className = 'chat-message';
+                tipMsg.style.background = '#e2e8f0';
+                tipMsg.style.fontStyle = 'italic';
+                tipMsg.style.fontSize = '0.9rem';
+                tipMsg.textContent = `💡 ${randomExample}`;
+                chat.appendChild(tipMsg);
+                chat.scrollTop = chat.scrollHeight;
+            }
+        }, 15000);
+    </script>
+</body>
+</html>
